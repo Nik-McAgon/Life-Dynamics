@@ -1,6 +1,7 @@
 import Daphny_counter
 import argparse
 import os
+import cv2
 
 parser = argparse.ArgumentParser(description='Process video files from a folder and detect daphnias')
 parser.add_argument(
@@ -40,7 +41,17 @@ else:
         img=Daphny_counter.get_Simple_imgList(nb)
 imgs=img[int(args['start']):int(args['stop'])]
 diffImg=Daphny_counter.RA_BackGround_Extraction(imgs)
-
+cv2.imwrite("/media/nmakagonov/DiskD/NN_DATA/daphniacounter/rez/rez.jpeg", diffImg)
 pimg=Daphny_counter.prepareImg(imgs,diffImg)
-[mean,min,max]=Daphny_counter.countDaph(pimg)
+
+[mean,min,max,boxs]=Daphny_counter.countDaph(pimg)
+print(len(boxs))
+print (len(imgs))
+for i in range(0, len(imgs)):
+    for j in range(0, len(boxs[i])):
+        cv2.rectangle(imgs[i], (boxs[i][j][0], boxs[i][j][1]), (boxs[i][j][2],boxs[i][j][3]), (255, 0, 200), 2)
+
+    cv2.imwrite("/media/nmakagonov/DiskD/NN_DATA/daphniacounter/rez/"+str(i)+".jpeg",imgs[i])
+    cv2.imshow("dcss", imgs[i])
+    #cv2.waitKey()
 Daphny_counter.printSave(mean,min,max,args)

@@ -146,18 +146,44 @@ def prepareImg(img,background):
 
 def countDaph(imgs):
     daph_stat=[]
+    boxs = []
     for i in range(0,len(imgs)):
-        BWImg=imgs[i]
-        contours, hier = cv2.findContours(BWImg, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
+        BWImg = imgs[i]
+        frame = imgs[i]
+        contours, hierarchy = cv2.findContours(BWImg, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
+        cv2.drawContours(frame, contours, contourIdx=-1, color=(100, 255, 90), thickness=1, lineType=cv2.LINE_AA)
+        for contour in contours:
+            print(cv2.contourArea(contour))
+        print(" ")
+        cv2.imwrite("/media/nmakagonov/DiskD/NN_DATA/daphniacounter/rez/contur"+str(i)+".jpeg", frame)
+
+        try: hierarchy = hierarchy[0]
+        except: hierarchy = []
+
+        height, width = BWImg.shape
+        min_x, min_y = width, height
+        max_x = max_y = 0
+        boxs.append([])
+
+        # computes the bounding box for the contour, and draws it on the frame,
+        for contour, hier in zip(contours, hierarchy):
+            (x,y,w,h) = cv2.boundingRect(contour)
+            min_x, max_x = min(x, min_x), max(x+w, max_x)
+            min_y, max_y = min(y, min_y), max(y+h, max_y)
+            if w > 1 and h > 1:
+                cv2.rectangle(frame, (x-round(w/4),y-round(h/4)), (x+w+round(w/4),y+h+round(h/4)), (255, 0, 200), 2)
+                boxs[i].append([x-round(w/4),y-round(h/4),x+w+round(w/4),y+h+round(h/4)])
+
         count = len(contours)
         daph_stat.append(count)
         print(count)
+
     mean=(np.mean(daph_stat))
     diff=daph_stat[:]-mean
     sort_diff=sorted(diff,key=abs)
     
     half_amplitude= abs(sort_diff[int(len(sort_diff)*0.999)])
-    return(round(mean), round(mean-half_amplitude), round(mean+half_amplitude))
+    return(round(mean), round(mean-half_amplitude), round(mean+half_amplitude), boxs)
 
 def printSave(mean,min,max,args):
     print("mean: ", mean)
@@ -166,10 +192,4 @@ def printSave(mean,min,max,args):
     f.write('%s: %.0f, [%.1f, %.1f]\n' % (args['path'], mean, min, max))
     f.flush()
     return('%s: %.0f, [%.1f, %.1f]\n' % (args['path'], mean, min, max))
-
-
-
-
-
-
 

@@ -1,1 +1,1 @@
-cam: 0, [0.0, 0.0]
+/media/nmakagonov/DiskD/NN_DATA/daphniacounter/DataForTraining/DataForTraining/MediumPopulation/medium_normal_RawImage/: 34, [27.0, 41.0]

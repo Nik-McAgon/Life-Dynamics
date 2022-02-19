@@ -1,12 +1,10 @@
 # import the opencv library
 import cv2
   
-def get_imgs_from_cam():
-
-
+def get_imgs_from_cam(camID):
 
     # define a video capture object
-    vid = cv2.VideoCapture(0,cv2.CAP_V4L2)
+    vid = cv2.VideoCapture(camID,cv2.CAP_V4L2)
     vid.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
     width = 1920
     height = 1080
@@ -23,18 +21,18 @@ def get_imgs_from_cam():
         img.append(crop(frame))
     
         # Display the resulting frame
-        cv2.imshow('frame', frame,)
+        #cv2.imshow('frame', frame,)
         
         # the 'q' button is set as the
         # quitting button you may use any
         # desired button of your choice
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if 0xFF == ord('q'):
             break
     
     # After the loop release the cap object
     vid.release()
     # Destroy all the windows
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
     
     return(img)
 
